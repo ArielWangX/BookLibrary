@@ -35,11 +35,27 @@
 package com.raywenderlich.android.BookLibrary
 
 import android.app.Application
+import com.raywenderlich.android.BookLibrary.database.LibrarianDatabase
+import com.raywenderlich.android.BookLibrary.repository.LibrarianRepository
+import com.raywenderlich.android.BookLibrary.repository.LibrarianRepositoryImpl
 
 class App : Application() {
 
   companion object {
     private lateinit var instance: App
+
+    private val database: LibrarianDatabase by lazy {
+      LibrarianDatabase.buildDatabase(instance)
+    }
+
+    val repository: LibrarianRepository by lazy {
+      LibrarianRepositoryImpl(
+        database.bookDao(),
+        database.genreDao(),
+        database.readingListDao(),
+        database.reviewDao()
+      )
+    }
   }
 
   override fun onCreate() {
