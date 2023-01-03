@@ -40,12 +40,15 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatActivity
+import com.raywenderlich.android.BookLibrary.App
 import com.raywenderlich.android.BookLibrary.R
 import com.raywenderlich.android.BookLibrary.model.Review
 import kotlinx.android.synthetic.main.activity_add_book_review.*
 import java.util.*
 
 class AddBookReviewActivity : AppCompatActivity() {
+
+  private val repository by lazy { App.repository }
 
   companion object {
     fun getIntent(context: Context) = Intent(context, AddBookReviewActivity::class.java)
@@ -61,16 +64,16 @@ class AddBookReviewActivity : AppCompatActivity() {
     bookOption.adapter = ArrayAdapter(
         this@AddBookReviewActivity,
         android.R.layout.simple_spinner_dropdown_item,
-        listOf<String>()
+        repository.getBooks().map { it.book.name }
     )
 
     addReview.setOnClickListener { addBookReview() }
   }
 
-  // TODO save a book
   private fun addBookReview() {
     val rating = reviewRating.rating.toInt()
-    val bookId = ""
+    val bookId = repository.getBooks()
+        .firstOrNull { it.book.name == bookOption.selectedItem }?.book?.id
 
     val imageUrl = bookImageUrl.text.toString()
     val notes = reviewNotes.text.toString()
@@ -80,11 +83,12 @@ class AddBookReviewActivity : AppCompatActivity() {
           bookId = bookId,
           rating = rating,
           notes = notes,
-          imageUrl = imageUrl,
-          entries = emptyList(),
-          lastUpdatedDate = Date()
+          imageUrl = imageUrl
+//          entries = emptyList(),
+//          lastUpdatedDate = Date()
       )
 
+      repository.addReview(bookReview)
       setResult(Activity.RESULT_OK)
       finish()
     }

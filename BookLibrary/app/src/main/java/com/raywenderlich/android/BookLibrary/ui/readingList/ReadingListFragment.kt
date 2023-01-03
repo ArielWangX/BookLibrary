@@ -40,7 +40,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.raywenderlich.android.BookLibrary.App
 import com.raywenderlich.android.BookLibrary.R
+import com.raywenderlich.android.BookLibrary.model.ReadingList
 import com.raywenderlich.android.BookLibrary.model.relations.ReadingListsWithBooks
 import com.raywenderlich.android.BookLibrary.ui.readingList.dialog.AddReadingListDialogFragment
 import com.raywenderlich.android.BookLibrary.ui.readingListDetails.ReadingListDetailsActivity
@@ -51,7 +53,7 @@ import kotlinx.android.synthetic.main.fragment_reading_list.*
 class ReadingListFragment : Fragment() {
 
   private val adapter by lazy { ReadingListAdapter(::onItemSelected, ::onItemLongTapped) }
-  private val readingLists = listOf<ReadingListsWithBooks>()
+  private val repository by lazy { App.repository }
 
   override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
       savedInstanceState: Bundle?): View? {
@@ -70,17 +72,17 @@ class ReadingListFragment : Fragment() {
     readingListRecyclerView.adapter = adapter
   }
 
-  // TODO load from DB
   private fun loadReadingLists() {
-    adapter.setData(readingLists)
+    adapter.setData(repository.getReadingLists())
+    pullToRefresh.isRefreshing = false
   }
 
   private fun initListeners() {
-    pullToRefresh.isEnabled = false
-
     addReadingList.setOnClickListener {
       showAddReadingListDialog()
     }
+
+    pullToRefresh.setOnRefreshListener { loadReadingLists() }
   }
 
   private fun showAddReadingListDialog() {
@@ -102,7 +104,8 @@ class ReadingListFragment : Fragment() {
   }
 
   private fun removeReadingList(readingList: ReadingListsWithBooks) {
-    // TODO remove reading list
+    repository.removeReadingList(ReadingList(readingList.id, readingList.name))
+    loadReadingLists()
   }
 
   private fun onItemSelected(readingList: ReadingListsWithBooks) {

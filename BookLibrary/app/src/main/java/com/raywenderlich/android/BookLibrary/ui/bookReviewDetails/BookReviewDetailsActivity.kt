@@ -40,6 +40,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
+import com.raywenderlich.android.BookLibrary.App
 import com.raywenderlich.android.BookLibrary.R
 import com.raywenderlich.android.BookLibrary.model.Genre
 import com.raywenderlich.android.BookLibrary.model.ReadingEntry
@@ -56,6 +57,7 @@ class BookReviewDetailsActivity : AppCompatActivity() {
 
   private var bookReview: BookReview? = null
   private val adapter by lazy { ReadingEntryAdapter(::onItemLongTapped) }
+  private val repository by lazy { App.repository }
 
   companion object {
     private const val KEY_BOOK_REVIEW = "book_review"
@@ -94,25 +96,23 @@ class BookReviewDetailsActivity : AppCompatActivity() {
     displayData(reviewId)
   }
 
-  // TODO fetch genre data
   private fun displayData(reviewId: String) {
     refreshData(reviewId)
     val data = bookReview ?: return
-    val genre = Genre(data.book.genreId, "")
+    val genre = repository.getGenreById(data.book.genreId)
 
     Glide.with(this).load(data.review.imageUrl).into(bookImage)
     reviewTitle.text = data.book.name
     reviewRating.rating = data.review.rating.toFloat()
     reviewDescription.text = data.review.notes
-    lastUpdated.text = formatDateToText(data.review.lastUpdatedDate)
+//    lastUpdated.text = formatDateToText(data.review.lastUpdatedDate)
     bookGenre.text = genre.name
 
-    adapter.setData(data.review.entries)
+//    adapter.setData(data.review.entries)
   }
 
   private fun refreshData(id: String) {
-    return
-    val storedReview = null // TODO fetch review
+    val storedReview = repository.getReviewById(id)
 
     bookReview = storedReview
   }
@@ -131,8 +131,8 @@ class BookReviewDetailsActivity : AppCompatActivity() {
   private fun addNewEntry(readingEntry: ReadingEntry) {
     val data = bookReview?.review ?: return
 
-    val updatedReview = data.copy(entries = data.entries + readingEntry,
-        lastUpdatedDate = Date())
+//    val updatedReview = data.copy(entries = data.entries + readingEntry,
+//        lastUpdatedDate = Date())
 
     // TODO update review
     toast("Entry added!")
@@ -144,10 +144,10 @@ class BookReviewDetailsActivity : AppCompatActivity() {
     val data = bookReview ?: return
     val currentReview = data.review
 
-    val newReview = currentReview.copy(
-        entries = currentReview.entries - readingEntry,
-        lastUpdatedDate = Date()
-    )
+//    val newReview = currentReview.copy(
+//        entries = currentReview.entries - readingEntry,
+//        lastUpdatedDate = Date()
+//    )
     // TODO update review
 
     loadData()
