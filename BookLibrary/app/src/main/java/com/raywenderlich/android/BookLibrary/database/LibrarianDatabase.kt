@@ -10,11 +10,13 @@ import com.raywenderlich.android.BookLibrary.database.dao.ReadingListDao
 import com.raywenderlich.android.BookLibrary.database.dao.ReviewDao
 import com.raywenderlich.android.BookLibrary.model.Book
 import com.raywenderlich.android.BookLibrary.model.Genre
+import com.raywenderlich.android.BookLibrary.model.ReadingList
+import com.raywenderlich.android.BookLibrary.model.Review
 
 const val DATABASE_VERSION = 1
 
 @Database(
-    entities = [Book::class, Genre::class],
+    entities = [Book::class, Genre::class, ReadingList::class, Review::class],
     version = DATABASE_VERSION
 )
 abstract class LibrarianDatabase : RoomDatabase() {
