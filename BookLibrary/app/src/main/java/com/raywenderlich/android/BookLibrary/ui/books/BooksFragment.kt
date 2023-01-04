@@ -45,6 +45,8 @@ import com.raywenderlich.android.BookLibrary.R
 import com.raywenderlich.android.BookLibrary.model.Book
 import com.raywenderlich.android.BookLibrary.model.relations.BookAndGenre
 import com.raywenderlich.android.BookLibrary.ui.addBook.AddBookActivity
+import com.raywenderlich.android.BookLibrary.ui.filter.ByGenre
+import com.raywenderlich.android.BookLibrary.ui.filter.ByRating
 import com.raywenderlich.android.BookLibrary.ui.filter.Filter
 import com.raywenderlich.android.BookLibrary.ui.filter.FilterPickerDialogFragment
 import com.raywenderlich.android.BookLibrary.utils.createAndShowDialog
@@ -99,7 +101,11 @@ class BooksFragment : Fragment() {
   private fun loadBooks() {
     pullToRefresh.isRefreshing = true
 
-    val books = repository.getBooks()
+    val books = when (val currentFilter = filter) {
+      is ByGenre -> repository.getBooksByGenre(currentFilter.genreId)
+      is ByRating -> repository.getBooksByRating(currentFilter.rating)
+      else -> repository.getBooks()
+    }
 
     adapter.setData(books)
     pullToRefresh.isRefreshing = false

@@ -6,12 +6,13 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.raywenderlich.android.BookLibrary.model.Book
+import com.raywenderlich.android.BookLibrary.model.relations.BookAndGenre
 
 @Dao
 interface BookDao {
 
     @Query("SELECT * FROM books")
-    fun getBooks(): List<Book>
+    fun getBooks(): List<BookAndGenre>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun addBook(book: Book)
