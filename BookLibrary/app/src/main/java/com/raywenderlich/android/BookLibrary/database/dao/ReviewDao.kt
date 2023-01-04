@@ -5,7 +5,9 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import com.raywenderlich.android.BookLibrary.model.Review
+import com.raywenderlich.android.BookLibrary.model.relations.BookReview
 
 @Dao
 interface ReviewDao {
@@ -17,11 +19,15 @@ interface ReviewDao {
     fun updateReview(review: Review)
 
     @Query("SELECT * FROM Review")
-    fun getReviews(): List<Review>
+    fun getReviews(): List<BookReview>
 
     @Query("SELECT * FROM Review WHERE id = :reviewId")
-    fun getReviewById(reviewId: String): Review
+    fun getReviewById(reviewId: String): BookReview
 
     @Delete
     fun removeReview(review: Review)
+
+    @Transaction
+    @Query("SELECT * FROM Review WHERE rating >= :rating")
+    fun getBookReviewByRating(rating: Int): List<BookReview>
 }
