@@ -12,19 +12,19 @@ import com.raywenderlich.android.BookLibrary.model.relations.BooksByGenre
 interface GenreDao {
 
     @Query("SELECT * FROM genre")
-    fun getGenre(): List<Genre>
+    suspend fun getGenre(): List<Genre>
 
     @Query("SELECT * FROM genre WHERE id = :genreId")
-    fun getGenreById(genreId: String): Genre
+    suspend fun getGenreById(genreId: String): Genre
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun addGenres(genres: List<Genre>)
+    suspend fun addGenres(genres: List<Genre>)
 
     @Transaction
     @Query("SELECT * FROM genre WHERE id = :genreId")
-    fun getBooksByGenre(genreId: String): BooksByGenre
+    suspend fun getBooksByGenre(genreId: String): BooksByGenre
 
     @Transaction
     @Query("SELECT * FROM genre")
-    fun getBooksByGenres(): List<BooksByGenre>
+    suspend fun getBooksByGenres(): List<BooksByGenre>
 }

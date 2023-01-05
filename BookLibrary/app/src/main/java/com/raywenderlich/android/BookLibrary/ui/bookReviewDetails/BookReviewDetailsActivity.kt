@@ -38,6 +38,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.raywenderlich.android.BookLibrary.App
@@ -51,6 +52,7 @@ import com.raywenderlich.android.BookLibrary.utils.createAndShowDialog
 import com.raywenderlich.android.BookLibrary.utils.formatDateToText
 import com.raywenderlich.android.BookLibrary.utils.toast
 import kotlinx.android.synthetic.main.activity_book_review_details.*
+import kotlinx.coroutines.launch
 import java.util.*
 
 class BookReviewDetailsActivity : AppCompatActivity() {
@@ -96,12 +98,12 @@ class BookReviewDetailsActivity : AppCompatActivity() {
     displayData(reviewId)
   }
 
-  private fun displayData(reviewId: String) {
+  private fun displayData(reviewId: String) = lifecycleScope.launch {
     refreshData(reviewId)
-    val data = bookReview ?: return
+    val data = bookReview ?: return@launch
     val genre = repository.getGenreById(data.book.genreId)
 
-    Glide.with(this).load(data.review.imageUrl).into(bookImage)
+    Glide.with(this@BookReviewDetailsActivity).load(data.review.imageUrl).into(bookImage)
     reviewTitle.text = data.book.name
     reviewRating.rating = data.review.rating.toFloat()
     reviewDescription.text = data.review.notes
@@ -111,7 +113,7 @@ class BookReviewDetailsActivity : AppCompatActivity() {
 //    adapter.setData(data.review.entries)
   }
 
-  private fun refreshData(id: String) {
+  private fun refreshData(id: String) = lifecycleScope.launch {
     val storedReview = repository.getReviewById(id)
 
     bookReview = storedReview

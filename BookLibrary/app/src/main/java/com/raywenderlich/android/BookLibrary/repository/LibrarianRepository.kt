@@ -8,40 +8,45 @@ import com.raywenderlich.android.BookLibrary.model.relations.BookAndGenre
 import com.raywenderlich.android.BookLibrary.model.relations.BookReview
 import com.raywenderlich.android.BookLibrary.model.relations.BooksByGenre
 import com.raywenderlich.android.BookLibrary.model.relations.ReadingListsWithBooks
+import kotlinx.coroutines.flow.Flow
 
 interface LibrarianRepository {
 
-    fun addBook(book: Book)
+    suspend fun addBook(book: Book)
 
-    fun getBooks(): List<BookAndGenre>
+    suspend fun getBooks(): List<BookAndGenre>
 
-    fun removeBook(book: Book)
+    suspend fun removeBook(book: Book)
 
-    fun getBookById(bookId: String): Book
+    suspend fun getBookById(bookId: String): Book
 
-    fun getGenres(): List<Genre>
+    suspend fun getGenres(): List<Genre>
 
-    fun getGenreById(genreId: String): Genre
+    suspend fun getGenreById(genreId: String): Genre
 
-    fun addGenres(genres: List<Genre>)
+    suspend fun addGenres(genres: List<Genre>)
 
-    fun addReview(review: Review)
+    suspend fun addReview(review: Review)
 
-    fun updateReview(review: Review)
+    suspend fun updateReview(review: Review)
 
-    fun getReviews(): List<BookReview>
+    suspend fun getReviews(): List<BookReview>
 
-    fun removeReview(review: Review)
+    fun getReviewsFlow(): Flow<List<BookReview>>
 
-    fun getReviewById(reviewId: String): BookReview
+    suspend fun removeReview(review: Review)
 
-    fun addReadingList(readingList: ReadingList)
+    suspend fun getReviewById(reviewId: String): BookReview
 
-    fun getReadingLists(): List<ReadingListsWithBooks>
+    suspend fun addReadingList(readingList: ReadingList)
 
-    fun removeReadingList(readingList: ReadingList)
+    suspend fun getReadingLists(): List<ReadingListsWithBooks>
 
-    fun getBooksByGenre(genreId: String): List<BookAndGenre>
+    fun getReadingListsFlow(): Flow<List<ReadingListsWithBooks>>
 
-    fun getBooksByRating(rating: Int): List<BookAndGenre>
+    suspend fun removeReadingList(readingList: ReadingList)
+
+    suspend fun getBooksByGenre(genreId: String): List<BookAndGenre>
+
+    suspend fun getBooksByRating(rating: Int): List<BookAndGenre>
 }
