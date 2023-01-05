@@ -40,10 +40,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.fragment.app.DialogFragment
+import androidx.lifecycle.lifecycleScope
 import com.raywenderlich.android.BookLibrary.App
 import com.raywenderlich.android.BookLibrary.R
 import com.raywenderlich.android.BookLibrary.model.ReadingList
 import kotlinx.android.synthetic.main.dialog_add_reading_list.*
+import kotlinx.coroutines.launch
 
 class AddReadingListDialogFragment(private val onListAdded: () -> Unit) : DialogFragment() {
 
@@ -77,9 +79,11 @@ class AddReadingListDialogFragment(private val onListAdded: () -> Unit) : Dialog
     if (readingListName.isNotBlank()) {
       val readingList = ReadingList(name = readingListName)
 
-      repository.addReadingList(readingList)
-      onListAdded()
-      dismissAllowingStateLoss()
+      lifecycleScope.launch {
+        repository.addReadingList(readingList)
+        onListAdded()
+        dismissAllowingStateLoss()
+      }
     }
   }
 }

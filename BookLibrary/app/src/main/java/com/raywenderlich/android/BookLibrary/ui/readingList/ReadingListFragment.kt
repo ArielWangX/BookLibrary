@@ -39,6 +39,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.raywenderlich.android.BookLibrary.App
 import com.raywenderlich.android.BookLibrary.R
@@ -49,11 +50,17 @@ import com.raywenderlich.android.BookLibrary.ui.readingListDetails.ReadingListDe
 import com.raywenderlich.android.BookLibrary.utils.createAndShowDialog
 import com.raywenderlich.android.BookLibrary.utils.toast
 import kotlinx.android.synthetic.main.fragment_reading_list.*
+import kotlinx.android.synthetic.main.fragment_reading_list.pullToRefresh
+import kotlinx.android.synthetic.main.fragment_reviews.*
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 class ReadingListFragment : Fragment() {
 
   private val adapter by lazy { ReadingListAdapter(::onItemSelected, ::onItemLongTapped) }
   private val repository by lazy { App.repository }
+  private val readinglistsWithBooksFlow by lazy { repository.getReadingListsFlow() }
 
   override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
       savedInstanceState: Bundle?): View? {
@@ -70,19 +77,21 @@ class ReadingListFragment : Fragment() {
   private fun initUi() {
     readingListRecyclerView.layoutManager = LinearLayoutManager(context)
     readingListRecyclerView.adapter = adapter
+    pullToRefresh.isEnabled = false
   }
 
-  private fun loadReadingLists() {
-    adapter.setData(repository.getReadingLists())
-    pullToRefresh.isRefreshing = false
+  private fun loadReadingLists() = lifecycleScope.launch {
+    readinglistsWithBooksFlow.catch { error ->
+      error.printStackTrace()
+    }.collect {
+      adapter.setData(it)
+    }
   }
 
   private fun initListeners() {
     addReadingList.setOnClickListener {
       showAddReadingListDialog()
     }
-
-    pullToRefresh.setOnRefreshListener { loadReadingLists() }
   }
 
   private fun showAddReadingListDialog() {
@@ -103,9 +112,8 @@ class ReadingListFragment : Fragment() {
     )
   }
 
-  private fun removeReadingList(readingList: ReadingListsWithBooks) {
+  private fun removeReadingList(readingList: ReadingListsWithBooks) = lifecycleScope.launch {
     repository.removeReadingList(ReadingList(readingList.id, readingList.name))
-    loadReadingLists()
   }
 
   private fun onItemSelected(readingList: ReadingListsWithBooks) {
