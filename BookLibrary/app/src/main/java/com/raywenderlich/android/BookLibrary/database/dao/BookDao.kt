@@ -21,5 +21,5 @@ interface BookDao {
     suspend fun removeBook(book: Book)
 
     @Query("SELECT * FROM books WHERE id = :bookId")
-    suspend fun getBookById(bookId: String): Book
+    suspend fun getBookById(bookId: String): BookAndGenre
 }

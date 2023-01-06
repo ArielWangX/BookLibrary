@@ -7,6 +7,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
+import androidx.room.Update
 import com.raywenderlich.android.BookLibrary.model.ReadingList
 import kotlinx.coroutines.flow.Flow
 
@@ -25,4 +26,10 @@ interface ReadingListDao {
 
     @Delete
     suspend fun removeReadingList(readingList: ReadingList)
+
+    @Query("SELECT * FROM readinglist WHERE id = :listId")
+    suspend fun getReadingListById(listId: String): ReadingList
+
+    @Update(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun updateReadingList(newReadingList: ReadingList)
 }
