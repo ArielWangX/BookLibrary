@@ -18,7 +18,7 @@ interface LibrarianRepository {
 
     suspend fun removeBook(book: Book)
 
-    suspend fun getBookById(bookId: String): Book
+    suspend fun getBookById(bookId: String): BookAndGenre
 
     suspend fun getGenres(): List<Genre>
 
@@ -43,6 +43,10 @@ interface LibrarianRepository {
     suspend fun getReadingLists(): List<ReadingListsWithBooks>
 
     fun getReadingListsFlow(): Flow<List<ReadingListsWithBooks>>
+
+    suspend fun getReadingListById(listId: String): ReadingListsWithBooks
+
+    suspend fun updateReadingList(newReadingList: ReadingList)
 
     suspend fun removeReadingList(readingList: ReadingList)
 

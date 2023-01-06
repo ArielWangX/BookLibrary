@@ -29,7 +29,7 @@ class LibrarianRepositoryImpl(
 
     override suspend fun removeBook(book: Book) = bookDao.removeBook(book)
 
-    override suspend fun getBookById(bookId: String): Book = bookDao.getBookById(bookId)
+    override suspend fun getBookById(bookId: String): BookAndGenre = bookDao.getBookById(bookId)
 
     override suspend fun getGenres(): List<Genre> = genreDao.getGenre()
 
@@ -62,6 +62,20 @@ class LibrarianRepositoryImpl(
                 ReadingListsWithBooks(it.id, it.name, emptyList())
             }
         }
+
+    override suspend fun getReadingListById(listId: String): ReadingListsWithBooks {
+        return readingListDao.getReadingListById(listId).let { readingList ->
+            ReadingListsWithBooks(
+                readingList.id,
+                readingList.name,
+                readingList.bookIds.map { getBookById(it) }
+            )
+        }
+    }
+
+    override suspend fun updateReadingList(newReadingList: ReadingList) {
+        readingListDao.updateReadingList(newReadingList)
+    }
 
     override suspend fun removeReadingList(readingList: ReadingList) = readingListDao.removeReadingList(readingList)
 
